@@ -244,9 +244,14 @@ def ping_loop():
                         target_content = result.stdout.split("\n")[1]
                         if not VERBOSE:
                             print_term(target_content)
-                        time_ms = float(result.stdout.split("time=")[1].split(" ")[0])
+
+                        # Extract time=XX and remove 'ms' if it's stuck to the number
+                        raw_time = result.stdout.split("time=")[1].split()[0].replace("ms", "")
+                        time_ms = float(raw_time)
+
                         global total_latency
                         total_latency += time_ms
+
                         if time_ms > LATENCY_THRESHOLD:
                             log_fault(f"HIGH LATENCY - {get_network_name()} | {target_content}", "l")
                             log_success(f"{get_network_name()} | {target_content}\t\tHIGH LATENCY")
@@ -274,6 +279,7 @@ def ping_loop():
             ping_count = 0
             archive_logs()
         time.sleep(PING_INTERVAL)
+
 
 def command_loop():
     global running
