@@ -185,7 +185,7 @@ def archive_logs():
 
 def delete_small_logs(directory, size_threshold):
     if not os.path.exists(directory):
-        print(f"Directory '{directory}' does not exist.")
+        # print(f"Directory '{directory}' does not exist.")
         return
 
     deleted_files = 0
