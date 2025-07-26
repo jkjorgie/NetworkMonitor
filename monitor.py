@@ -56,19 +56,23 @@ def toggle_log_success():
     global LOG_SUCCESS
     LOG_SUCCESS = not LOG_SUCCESS
 
+def ensure_log_file_exists(file_path):
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    if not os.path.exists(file_path):
+        open(file_path, 'a').close()
+
 def log_debug(message):
     if LOG_DEBUG:
+        ensure_log_file_exists(DEBUG_LOG)
         with open(DEBUG_LOG, "a") as f:
             f.write(f"{datetime.now()} - {message}\n")
 
 def log_fault(reason, fault):
+    ensure_log_file_exists(FAULT_LOG)
     with open(FAULT_LOG, "a") as f:
         f.write(f"{datetime.now()} - {reason}\n")
-    global latency_faults
-    global timeout_faults
-    global other_faults
-    global packet_loss_faults
-    global unknown_host_faults
+
+    global latency_faults, timeout_faults, other_faults, packet_loss_faults, unknown_host_faults
 
     if fault == "l":
         latency_faults += 1
@@ -83,6 +87,7 @@ def log_fault(reason, fault):
 
 def log_success(message):
     if LOG_SUCCESS:
+        ensure_log_file_exists(SUCCESS_LOG)
         with open(SUCCESS_LOG, "a") as f:
             f.write(f"{datetime.now()} - {message}\n")
     global successes
